@@ -20,7 +20,9 @@ export class UsersController {
   }
 
   @Get('/:id')
+  @UseGuards(JwtAuthGuard)
   async find(@Param('id') id: string) {
-    return this.usersService.findOne(Number(id));
+    const { password, ...rest } = await this.usersService.findOne(Number(id));
+    return rest;
   }
 }
