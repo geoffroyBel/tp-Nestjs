@@ -9,17 +9,27 @@ import { JwtAuthGuard } from './guards/jwt-auth.guards';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { ProductModule } from './product/product.module';
 import { ReservationsModule } from './reservations/reservations.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import * as joi from 'joi';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     UsersModule,
     ProductModule,
     ReservationsModule,
     // PassportModule.register({ defaultStrategy: 'jwt'}),
-    JwtModule.register({
-      secret: 'blabla',
-      signOptions: {
-        expiresIn: 3600,
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: async (configServise: ConfigService) => {
+        return {
+          secret: configServise.get('JWT_SECRET'),
+          signOptions: {
+            expiresIn: 3600,
+          },
+        };
       },
     }),
   ],

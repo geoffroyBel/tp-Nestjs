@@ -14,12 +14,12 @@ import { Product, User } from '@prisma/client';
 import { JwtAuthGuard } from '../guards/jwt-auth.guards';
 import { AdminGuard } from '../guards/admin-auth.guards';
 import { currentUser } from '../decorators/current-user.decorator';
+import { ProductGuard } from '../guards/productOwnerGward';
 
 @Controller('/products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Get()
   async getAllBook(): Promise<Product[]> {
     return this.productService.getAllProduts();
@@ -35,7 +35,7 @@ export class ProductController {
   }
 
   @Delete('/:id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, ProductGuard)
   @HttpCode(204)
   async delete(
     @Param('id') id: string,
@@ -45,6 +45,7 @@ export class ProductController {
   }
 
   @Patch('/:id')
+  @UseGuards(JwtAuthGuard, ProductGuard)
   async update(
     @Param('id') id: string,
     @Body() data: Product,

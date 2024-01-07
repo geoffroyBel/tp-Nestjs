@@ -1,8 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { PrismaService } from '@app/common/database/prisma.service';
-import { Reservation } from '@prisma/client';
+import { Reservation, User } from '@prisma/client';
 
 @Injectable()
 export class ReservationsService {
@@ -24,7 +28,7 @@ export class ReservationsService {
     });
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: number, user: User): Promise<void> {
     await this.prismaService.reservation.delete({ where: { id } });
   }
 }
